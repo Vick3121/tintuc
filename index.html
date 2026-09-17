@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tài Chính Nhanh</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--text:#111;--muted:#666;--accent:#d32f2f;--line:#e5e7eb}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.5}
+header{background:#111;color:#fff;padding:28px 16px}
+.container{max-width:1080px;margin:0 auto;padding:0 16px}
+header h1{margin:0;font-size:32px;letter-spacing:.5px}
+header p{margin:6px 0 0;color:#ddd}
+nav{margin-top:16px;display:flex;gap:12px;flex-wrap:wrap}
+nav a{color:#fff;text-decoration:none;background:#333;padding:6px 10px;border-radius:999px;font-size:14px}
+main{padding:24px 0}
+h2{font-size:22px;margin:0 0 14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.badge{display:inline-block;font-size:12px;font-weight:700;color:var(--accent);text-transform:uppercase}
+.time{font-size:12px;color:var(--muted);margin-left:8px}
+.card h3{margin:8px 0;font-size:18px}
+.card p{margin:8px 0;color:#333}
+.number{background:#fff5f5;border-left:4px solid var(--accent);padding:10px;border-radius:8px;font-weight:700}
+.meaning{color:#444}
+.source{font-size:12px;color:var(--muted);margin-top:10px}
+.tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+label{display:block;font-size:14px;margin-top:10px}
+input{width:100%;padding:10px;border:1px solid #ccc;border-radius:8px;font-size:15px;margin-top:4px}
+button{margin-top:12px;background:var(--accent);color:#fff;border:0;padding:10px 14px;border-radius:8px;font-weight:700;cursor:pointer}
+.result{margin-top:12px;background:#f0fdf4;border:1px solid #bbf7d0;padding:10px;border-radius:8px;font-weight:600}
+footer{border-top:1px solid var(--line);padding:20px 0;color:var(--muted);font-size:13px}
+a{color:inherit}
+</style>
+</head>
+<body>
+<header>
+<div class="container">
+<h1>TÀI CHÍNH NHANH</h1>
+<p>Đọc 30 giây → hiểu chuyện gì xảy ra → biết con số quan trọng.</p>
+<nav>
+<a href="#moi-nhat">Mới nhất</a>
+<a href="#cong-cu">Công cụ</a>
+<a href="#vang">Vàng</a>
+<a href="#lai-suat">Lãi suất</a>
+<a href="#ty-gia">Tỷ giá</a>
+<a href="#chung-khoan">Chứng khoán</a>
+<a href="#bat-dong-san">Bất động sản</a>
+<a href="#bitcoin">Bitcoin</a>
+</nav>
+</div>
+</header>
+
+<main class="container">
+<section id="moi-nhat">
+<h2>Mới nhất</h2>
+<div id="newsGrid" class="grid"></div>
+</section>
+
+<section id="cong-cu" style="margin-top:36px">
+<h2>Công cụ tính nhanh</h2>
+<div class="tools">
+  <div class="card">
+    <h3>Lãi suất tiết kiệm</h3>
+    <label>Số tiền gửi (VNĐ)
+      <input id="savingsPrincipal" type="number" value="500000000">
+    </label>
+    <label>Lãi suất %/năm
+      <input id="savingsRate" type="number" value="6.5" step="0.1">
+    </label>
+    <label>Kỳ hạn (tháng)
+      <input id="savingsMonths" type="number" value="12">
+    </label>
+    <button onclick="calcSavings()">Tính lãi</button>
+    <div id="savingsResult" class="result">...</div>
+  </div>
+
+  <div class="card">
+    <h3>Vay trả góp</h3>
+    <label>Số tiền vay (VNĐ)
+      <input id="loanAmount" type="number" value="1000000000">
+    </label>
+    <label>Lãi suất %/năm
+      <input id="loanRate" type="number" value="10" step="0.1">
+    </label>
+    <label>Thời hạn (năm)
+      <input id="loanYears" type="number" value="20">
+    </label>
+    <button onclick="calcLoan()">Tính trả hàng tháng</button>
+    <div id="loanResult" class="result">...</div>
+  </div>
+</div>
+</section>
+</main>
+
+<footer>
+<div class="container">
+<p>Dữ liệu minh họa. Khi dùng thật, phải ghi nguồn và thời điểm cập nhật. Không phải lời khuyên đầu tư.</p>
+</div>
+</footer>
+
+<script>
+const news = [
+  {
+    cat:"Vàng",
+    time:"Hôm nay 08:30",
+    title:"Giá vàng thế giới tăng lên xxx USD/oz",
+    summary:"Vàng trong nước phản ứng thế nào?",
+    number:"Vàng SJC: ... triệu/lượng | vàng nhẫn: ...",
+    meaning:"Chênh lệch với thế giới vẫn ở mức cao; cần theo dõi thêm tỷ giá.",
+    source:"Nguồn: ..."
+  },
+  {
+    cat:"Lãi suất",
+    time:"Hôm nay 09:00",
+    title:"Ngân hàng X tăng lãi suất kỳ hạn 12 tháng từ 6,2% lên 6,5%",
+    summary:"Gửi 500 triệu thì nhận bao nhiêu?",
+    number:"500 triệu gửi 12 tháng: khoảng 32,5 triệu đồng/năm trước thuế/phí.",
+    meaning:"Mức tăng nhẹ; nên so sánh với kỳ hạn ngắn hơn và ngân hàng khác.",
+    source:"Nguồn: ..."
+  },
+  {
+    cat:"Tỷ giá",
+    time:"Hôm nay 10:15",
+    title:"USD/VND hôm nay biến động bao nhiêu?",
+    summary:"Tỷ giá trung tâm và tỷ giá ngân hàng.",
+    number:"USD/VND: ...",
+    meaning:"Tỷ giá ảnh hưởng đến nhập khẩu, vàng và lạm phát.",
+    source:"Nguồn: ..."
+  }
+];
+
+const newsGrid = document.getElementById('newsGrid');
+newsGrid.innerHTML = news.map(item => `
+<article class="card">
+  <div><span class="badge">${item.cat}</span><span class="time">${item.time}</span></div>
+  <h3>${item.title}</h3>
+  <p>${item.summary}</p>
+  <div class="number">${item.number}</div>
+  <p class="meaning">${item.meaning}</p>
+  <div class="source">${item.source}</div>
+</article>
+`).join('');
+
+function formatVND(n){
+  return new Intl.NumberFormat('vi-VN', { style:'currency', currency:'VND', maximumFractionDigits:0 }).format(n);
+}
+
+function calcSavings(){
+  const p = Number(document.getElementById('savingsPrincipal').value);
+  const rate = Number(document.getElementById('savingsRate').value);
+  const months = Number(document.getElementById('savingsMonths').value);
+
+  const interest = p * (rate/100) * (months/12);
+  const total = p + interest;
+
+  document.getElementById('savingsResult').textContent =
+    `Tiền lãi tạm tính: ${formatVND(interest)} | Tổng nhận: ${formatVND(total)}`;
+}
+
+function calcLoan(){
+  const p = Number(document.getElementById('loanAmount').value);
+  const annual = Number(document.getElementById('loanRate').value);
+  const years = Number(document.getElementById('loanYears').value);
+
+  const n = years * 12;
+  const r = annual/100/12;
+  let monthly;
+
+  if(r === 0){
+    monthly = p / n;
+  } else {
+    monthly = p * r * Math.pow(1+r,n) / (Math.pow(1+r,n)-1);
+  }
+
+  const total = monthly * n;
+
+  document.getElementById('loanResult').textContent =
+    `Trả hàng tháng: ${formatVND(monthly)} | Tổng trả: ${formatVND(total)} | Tổng lãi: ${formatVND(total-p)}`;
+}
+
+calcSavings();
+calcLoan();
+</script>
+</body>
+</html>
